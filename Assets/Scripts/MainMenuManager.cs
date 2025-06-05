@@ -3,45 +3,50 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static System.Net.Mime.MediaTypeNames;
 using UnityEngine.Audio;
+using static System.Net.Mime.MediaTypeNames;
 
 public class MainMenuManager : MonoBehaviour
 {
     [Header("Panels")]
-    public GameObject BackgroundPanel;  // Hierarchy의 BackgroundPanel 할당
-    public GameObject OptionsPanel;     // Hierarchy의 OptionsPanel 할당
+    public GameObject BackgroundPanel;  // 옵션 배경
+    public GameObject OptionsPanel;     // 옵션 메뉴
 
     [Header("Audio")]
     public AudioMixer masterMixer;
 
-    public void OnVolumeChange(float sliderValue)
-    {
-        // 로그 스케일(데시벨)로 변환해 자연스런 볼륨 조절
-        float dB = Mathf.Log10(sliderValue) * 20f;
-        masterMixer.SetFloat("MasterVolume", dB);
-    }
+    // ▶ GameScene에서 UI를 켜기 위한 상태 변수
+    public static bool gameStartedFromMainMenu = false;
 
-    // START 버튼에 연결
+    // ▶ Start 버튼 클릭 시 호출
     public void OnStartGame()
     {
-        SceneManager.LoadScene("GameScene");  // Build Settings에 등록된 씬 이름 확인
+        gameStartedFromMainMenu = true;
+        SceneManager.LoadScene("GameScene");
     }
 
-    // OPTIONS 버튼에 연결
+    // ▶ 옵션 버튼 클릭 시 호출
     public void OnOptions()
     {
         BackgroundPanel.SetActive(true);
         OptionsPanel.SetActive(true);
     }
-    // BACK 버튼에 연결
+
+    // ▶ 옵션 → 뒤로가기 버튼 클릭 시 호출
     public void OnBackFromOptions()
     {
         OptionsPanel.SetActive(false);
         BackgroundPanel.SetActive(false);
     }
 
-    // QUIT 버튼에 연결
+    // ▶ 볼륨 조절 슬라이더 변경 시 호출
+    public void OnVolumeChange(float sliderValue)
+    {
+        float dB = Mathf.Log10(sliderValue) * 20f;
+        masterMixer.SetFloat("MasterVolume", dB);
+    }
+
+    // ▶ 종료 버튼 클릭 시 호출
     public void OnQuitGame()
     {
 #if UNITY_EDITOR
